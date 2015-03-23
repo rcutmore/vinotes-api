@@ -12,7 +12,8 @@ class Wine(models.Model):
     winery = models.ForeignKey(Winery)
 
     def __str__(self):
-        return '{winery} {wine}'.format(winery=self.winery, wine=self.title)
+        return '{winery} {wine} {vintage}'.format(
+            winery=self.winery, wine=self.title, vintage=self.vintage)
 
 class Note(models.Model):
     wine = models.ForeignKey(Wine)
