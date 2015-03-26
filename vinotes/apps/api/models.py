@@ -17,6 +17,12 @@ class Wine(models.Model):
         return '{winery} {wine} {vintage}'.format(
             winery=self.winery, wine=self.title, vintage=self.vintage)
 
+class Trait(models.Model):
+    description = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.description
+
 class Note(models.Model):
     wine = models.ForeignKey(Wine)
 
