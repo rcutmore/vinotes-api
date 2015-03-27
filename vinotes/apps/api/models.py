@@ -25,6 +25,14 @@ class Trait(models.Model):
 
 class Note(models.Model):
     wine = models.ForeignKey(Wine)
+    color_traits = models.ManyToManyField(
+        Trait, related_name='color_traits', blank=True)
+    nose_traits = models.ManyToManyField(
+        Trait, related_name='nose_traits', blank=True)
+    taste_traits = models.ManyToManyField(
+        Trait, related_name='taste_traits', blank=True)
+    finish_traits = models.ManyToManyField(
+        Trait, related_name='finish_traits', blank=True)
 
     def __str__(self):
         return 'Tasting note for: {wine}'.format(wine=self.wine)
