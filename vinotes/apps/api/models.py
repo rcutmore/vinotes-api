@@ -28,13 +28,13 @@ class Note(models.Model):
 
     wine = models.ForeignKey(Wine)
     color_traits = models.ManyToManyField(
-        Trait, related_name='color_traits', blank=True)
+        Trait, related_name='color_traits', null=True, blank=True)
     nose_traits = models.ManyToManyField(
-        Trait, related_name='nose_traits', blank=True)
+        Trait, related_name='nose_traits', null=True, blank=True)
     taste_traits = models.ManyToManyField(
-        Trait, related_name='taste_traits', blank=True)
+        Trait, related_name='taste_traits', null=True, blank=True)
     finish_traits = models.ManyToManyField(
-        Trait, related_name='finish_traits', blank=True)
+        Trait, related_name='finish_traits', null=True, blank=True)
     rating = models.PositiveSmallIntegerField(
         choices=RATING_CHOICES, null=True, blank=True)
 
