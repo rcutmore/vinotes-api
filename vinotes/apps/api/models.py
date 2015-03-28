@@ -24,6 +24,8 @@ class Trait(models.Model):
         return self.description
 
 class Note(models.Model):
+    RATING_CHOICES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5),)
+
     wine = models.ForeignKey(Wine)
     color_traits = models.ManyToManyField(
         Trait, related_name='color_traits', blank=True)
@@ -33,6 +35,8 @@ class Note(models.Model):
         Trait, related_name='taste_traits', blank=True)
     finish_traits = models.ManyToManyField(
         Trait, related_name='finish_traits', blank=True)
+    rating = models.PositiveSmallIntegerField(
+        choices=RATING_CHOICES, null=True, blank=True)
 
     def __str__(self):
         return 'Tasting note for: {wine}'.format(wine=self.wine)
