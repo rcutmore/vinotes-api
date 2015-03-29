@@ -27,6 +27,7 @@ class Note(models.Model):
     RATING_CHOICES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5),)
 
     taster = models.ForeignKey('auth.User')
+    created = models.DateTimeField(auto_now_add=True)
     wine = models.ForeignKey(Wine)
     color_traits = models.ManyToManyField(
         Trait, related_name='color_traits', null=True, blank=True)
