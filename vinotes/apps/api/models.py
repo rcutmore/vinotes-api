@@ -1,33 +1,37 @@
 from django.db import models
 
 class Winery(models.Model):
-    title = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
+    name = models.CharField(max_length=150)
 
     def __str__(self):
-        return self.title
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'wineries'
 
 class Wine(models.Model):
-    title = models.CharField(max_length=150)
-    vintage = models.IntegerField()
-    description = models.TextField(blank=True)
     winery = models.ForeignKey(Winery)
+    name = models.CharField(max_length=150)
+    vintage = models.IntegerField()
 
     def __str__(self):
         return '{winery} {wine} {vintage}'.format(
-            winery=self.winery, wine=self.title, vintage=self.vintage)
+            winery=self.winery, wine=self.name, vintage=self.vintage)
+
+    class Meta:
+        unique_together = ('winery', 'name', 'vintage',)
 
 class Trait(models.Model):
-    description = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return self.description
+        return self.name
 
 class Note(models.Model):
     RATING_CHOICES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5),)
 
     taster = models.ForeignKey('auth.User')
-    created = models.DateTimeField(auto_now_add=True)
+    tasted = models.DateTimeField(null=True, blank=True)
     wine = models.ForeignKey(Wine)
     color_traits = models.ManyToManyField(
         Trait, related_name='color_traits', null=True, blank=True)
