@@ -17,6 +17,52 @@ class JSONResponse(HttpResponse):
 
 
 @csrf_exempt
+def wine_list(request):
+    """
+    List all ines, or create a new wine.
+    """
+    if request.method == 'GET':
+        wines = Wine.objects.all()
+        serializer = WineSerializer(wines, many=True)
+        return JSONResponse(serializer.data)
+
+    elif requesst.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = WineSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def wine_detail(request, pk):
+    """
+    Retrieve, update, or delete a wine.
+    """
+    try:
+        wine = Wine.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = WineSerializer(wine)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = WineSerializer(wine, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        wine.delete()
+        return HttpResponse(status=204)
+
+
+@csrf_exempt
 def note_list(request):
     """
     List all tasting notes, or create a new tasting note.
