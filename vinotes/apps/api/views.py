@@ -63,6 +63,48 @@ def wine_detail(request, pk):
 
 
 @csrf_exempt
+def winery_list(request):
+    """
+    List all wineries, or create a new winery.
+    """
+    if request.method == 'GET':
+        wineries = Winery.objects.all()
+        serializer = WinerySerializer(wineries, many=True)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = WinerySerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def winery_detail(request, pk):
+    """
+    Retrieve, update, or delete a winery.
+    """
+    try:
+        winery = Winery.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = WinerySerializer(winery)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = WinerySerializer(winery, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
 def note_list(request):
     """
     List all tasting notes, or create a new tasting note.
