@@ -63,6 +63,52 @@ def note_detail(request, pk):
 
 
 @csrf_exempt
+def trait_list(request):
+    """
+    List all wine traits, or create a new wine trait.
+    """
+    if request.method == 'GET':
+        traits = Trait.objects.all()
+        serializer = TraitSerializer(traits, many=True)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = TraitSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+
+
+@csrf_exempt
+def trait_detail(request, pk):
+    """
+    Retrieve, update, or delete a wine trait.
+    """
+    try:
+        trait = Trait.objects.get(pk=pk)
+    except:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = TraitSerializer(trait)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = TraitSerializer(trait, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        trait.delete()
+        return HttpResponse(status=204)
+
+
+@csrf_exempt
 def wine_list(request):
     """
     List all wines, or create a new wine.
