@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 
@@ -12,3 +13,5 @@ urlpatterns = [
     url(r'^wineries/$', views.winery_list),
     url(r'^wineries/(?P<pk>[0-9]+)/$', views.winery_detail),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
