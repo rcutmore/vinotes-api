@@ -1,65 +1,72 @@
+from django.http import Http404
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Note, Trait, Wine, Winery
 from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer
 
 
-@api_view(['GET', 'POST'])
-def note_list(request, format=None):
+class NoteList(APIView):
     """
     List all tasting notes, or create a new tasting note.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         notes = Note.objects.all()
         serializer = NoteSerializer(notes, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+
+    def post(self, request, format=None):
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Reponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def note_detail(request, pk, format=None):
+class NoteDetail(APIView):
     """
     Retrieve, update, or delete a tasting note.
     """
-    try:
-        note = Note.objects.get(pk=pk)
-    except Note.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Note.objects.get(pk=pk)
+        except Note.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+
+    def get(self, request, pk, format=None):
+        note = self.get_object(pk)
         serializer = NoteSerializer(note)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+
+    def put(self, request, pk, format=None):
+        note = self.get_object(pk)
         serializer = NoteSerializer(note, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+
+    def delete(self, request, pk, format=None):
+        note = self.get_object(pk)
         note.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'POST'])
-def trait_list(request, format=None):
+class TraitList(APIView):
     """
     List all wine traits, or create a new wine trait.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         traits = Trait.objects.all()
         serializer = TraitSerializer(traits, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+
+    def post(self, request, format=None):
         serializer = TraitSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -67,43 +74,49 @@ def trait_list(request, format=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def trait_detail(request, pk, format=None):
+class TraitDetail(APIView):
     """
     Retrieve, update, or delete a wine trait.
     """
-    try:
-        trait = Trait.objects.get(pk=pk)
-    except Trait.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Trait.objects.get(pk=pk)
+        except Trait.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+
+    def get(self, request, pk, format=None):
+        trait = self.get_object(pk)
         serializer = TraitSerializer(trait)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+
+    def put(self, request, pk, format=None):
+        trait = self.get_object(pk)
         serializer = TraitSerializer(trait, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+
+    def delete(self, request, pk, format=None):
+        trait = self.get_object(pk)
         trait.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'POST'])
-def wine_list(request, format=None):
+class WineList(APIView):
     """
     List all wines, or create a new wine.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         wines = Wine.objects.all()
         serializer = WineSerializer(wines, many=True)
         return Response(serializer.data)
 
-    elif requesst.method == 'POST':
+
+    def post(self, request, format=None):
         serializer = WineSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -111,43 +124,49 @@ def wine_list(request, format=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def wine_detail(request, pk, format=None):
+class WineDetail(APIView):
     """
     Retrieve, update, or delete a wine.
     """
-    try:
-        wine = Wine.objects.get(pk=pk)
-    except Wine.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Wine.objects.get(pk=pk)
+        except Wine.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+
+    def get(self, request, pk, format=None):
+        wine = self.get_object(pk)
         serializer = WineSerializer(wine)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
-        serializer = WineSerializer(wine, data=request.data)
+
+    def put(self, request, pk, format=None):
+        wine = self.get_object(pk)
+        serializer = WinerySerializer(wine, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+
+    def delete(self, request, pk, format=None):
+        wine = self.get_object(pk)
         wine.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@api_view(['GET', 'POST'])
-def winery_list(request, format=None):
+class WineryList(APIView):
     """
     List all wineries, or create a new winery.
     """
-    if request.method == 'GET':
+    def get(self, request, format=None):
         wineries = Winery.objects.all()
         serializer = WinerySerializer(wineries, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+
+    def post(self, request, format=None):
         serializer = WinerySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -155,27 +174,33 @@ def winery_list(request, format=None):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def winery_detail(request, pk, format=None):
+class WineryDetail(APIView):
     """
     Retrieve, update, or delete a winery.
     """
-    try:
-        winery = Winery.objects.get(pk=pk)
-    except Winery.DoesNotExist:
-        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Winery.objects.get(pk=pk)
+        except Winery.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+
+    def get(self, request, pk, format=None):
+        winery = self.get_object(pk)
         serializer = WinerySerializer(winery)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
+
+    def put(self, request, pk, format=None):
+        winery = self.get_object(pk)
         serializer = WinerySerializer(winery, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request.method == 'DELETE':
+
+    def delete(self, request, pk, format=None):
+        winery = self.get_object(pk)
         winery.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
