@@ -1,6 +1,7 @@
+from django.contrib.auth.models import User
 from rest_framework import generics
 from .models import Note, Trait, Wine, Winery
-from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer
+from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
 
 
 class NoteList(generics.ListCreateAPIView):
@@ -65,3 +66,19 @@ class WineryDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Winery.objects.all()
     serializer_class = WinerySerializer
+
+
+class UserList(generics.ListAPIView):
+    """
+    List all users.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    """
+    Retrieve a user.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
