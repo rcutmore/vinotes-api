@@ -29,6 +29,9 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
+
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email')
+        fields = ('id', 'username', 'email', 'notes')
