@@ -12,6 +12,10 @@ class NoteList(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
 
 
+    def perform_create(self, serializer):
+        serializer.save(taster=self.request.user)
+
+
 class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update, or delete a tasting note.

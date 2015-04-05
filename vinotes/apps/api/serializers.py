@@ -22,6 +22,9 @@ class TraitSerializer(serializers.ModelSerializer):
 
 
 class NoteSerializer(serializers.ModelSerializer):
+    taster = serializers.ReadOnlyField(source='taster.username')
+
+    
     class Meta:
         model = Note
         fields = ('id', 'taster', 'tasted', 'wine', 'color_traits', 
