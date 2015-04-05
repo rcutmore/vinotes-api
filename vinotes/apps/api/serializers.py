@@ -19,10 +19,10 @@ class WineSerializer(serializers.ModelSerializer):
 
 
 class TraitSerializer(serializers.ModelSerializer):
-    color_notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
-    nose_notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
-    taste_notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
-    finish_notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
+    color_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    nose_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    taste_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    finish_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
 
     class Meta:
