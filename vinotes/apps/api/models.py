@@ -10,7 +10,7 @@ class Winery(models.Model):
         verbose_name_plural = 'wineries'
 
 class Wine(models.Model):
-    winery = models.ForeignKey(Winery)
+    winery = models.ForeignKey(Winery, related_name='wines')
     name = models.CharField(max_length=150)
     vintage = models.IntegerField()
 
