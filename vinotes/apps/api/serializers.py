@@ -42,7 +42,7 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    notes = serializers.PrimaryKeyRelatedField(many=True, queryset=Note.objects.all())
+    notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
 
     class Meta:
