@@ -4,7 +4,7 @@ from .models import Note, Trait, Wine, Winery
 
 
 class WinerySerializer(serializers.ModelSerializer):
-    wines = serializers.PrimaryKeyRelatedField(many=True, queryset=Wine.objects.all())
+    wines = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
 
     class Meta:
