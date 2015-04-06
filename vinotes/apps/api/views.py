@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from rest_framework import generics
+from rest_framework import generics, permissions
 from .models import Note, Trait, Wine, Winery
 from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
 
@@ -10,6 +10,7 @@ class NoteList(generics.ListCreateAPIView):
     """
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
     def perform_create(self, serializer):
@@ -22,6 +23,7 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class TraitList(generics.ListCreateAPIView):
@@ -30,6 +32,7 @@ class TraitList(generics.ListCreateAPIView):
     """
     queryset = Trait.objects.all()
     serializer_class = TraitSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class TraitDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -38,6 +41,7 @@ class TraitDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Trait.objects.all()
     serializer_class = TraitSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class WineList(generics.ListCreateAPIView):
@@ -46,6 +50,7 @@ class WineList(generics.ListCreateAPIView):
     """
     queryset = Wine.objects.all()
     serializer_class = WineSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class WineDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -54,6 +59,7 @@ class WineDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Wine.objects.all()
     serializer_class = WineSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class WineryList(generics.ListCreateAPIView):
@@ -62,6 +68,7 @@ class WineryList(generics.ListCreateAPIView):
     """
     queryset = Winery.objects.all()
     serializer_class = WinerySerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class WineryDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -70,6 +77,7 @@ class WineryDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Winery.objects.all()
     serializer_class = WinerySerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class UserList(generics.ListAPIView):
@@ -78,6 +86,7 @@ class UserList(generics.ListAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -86,3 +95,4 @@ class UserDetail(generics.RetrieveAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
