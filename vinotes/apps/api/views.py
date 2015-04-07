@@ -8,9 +8,12 @@ class NoteList(generics.ListCreateAPIView):
     """
     List all tasting notes, or create a new tasting note.
     """
-    queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+    def get_queryset(self):
+        return Note.objects.filter(taster=self.request.user)
 
 
     def perform_create(self, serializer):
@@ -21,9 +24,12 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     Retrieve, update, or delete a tasting note.
     """
-    queryset = Note.objects.all()
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+
+    def get_queryset(self):
+        return Note.objects.filter(taster=self.request.user)
 
 
 class TraitList(generics.ListCreateAPIView):
