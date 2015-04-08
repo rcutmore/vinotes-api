@@ -1,9 +1,10 @@
-from django.conf.urls import url
+from django.conf.urls import include, url
 from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 
 urlpatterns = [
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^notes/$', views.NoteList.as_view()),
     url(r'^notes/(?P<pk>[0-9]+)/$', views.NoteDetail.as_view()),
     url(r'^traits/$', views.TraitList.as_view()),
