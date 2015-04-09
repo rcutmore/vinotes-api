@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
 from .models import Note, Trait, Wine, Winery
+from .permissions import IsSameUserOrAdmin
 from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
 
 
@@ -101,4 +102,4 @@ class UserDetail(generics.RetrieveAPIView):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAdminUser, permissions.IsAuthenticated,)
+    permission_classes = (IsSameUserOrAdmin,)
