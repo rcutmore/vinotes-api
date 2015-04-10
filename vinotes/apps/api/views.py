@@ -1,8 +1,21 @@
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from .models import Note, Trait, Wine, Winery
 from .permissions import IsSameUserOrAdmin
 from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
+
+
+@api_view(('GET',))
+def api_root(request, format=None):
+    return Response({
+        'notes': reverse('note-list', request=request, format=format),
+        'traits': reverse('trait-list', request=request, format=format),
+        'wines': reverse('wine-list', request=request, format=format),
+        'wineries': reverse('winery-list', request=request, format=format),
+    })
 
 
 class NoteList(generics.ListCreateAPIView):
