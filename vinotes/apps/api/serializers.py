@@ -3,48 +3,54 @@ from rest_framework import serializers
 from .models import Note, Trait, Wine, Winery
 
 
-class WinerySerializer(serializers.ModelSerializer):
-    wines = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class WinerySerializer(serializers.HyperlinkedModelSerializer):
+    wines = serializers.HyperlinkedIdentityField(
+        many=True, read_only=True, view_name='wine-detail')
 
 
     class Meta:
         model = Winery
-        fields = ('id', 'name', 'wines')
+        fields = ('url', 'name', 'wines')
 
 
-class WineSerializer(serializers.ModelSerializer):
+class WineSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Wine
-        fields = ('id', 'winery', 'name', 'vintage')
+        fields = ('url', 'winery', 'name', 'vintage')
 
 
-class TraitSerializer(serializers.ModelSerializer):
-    color_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    nose_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    taste_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    finish_notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class TraitSerializer(serializers.HyperlinkedModelSerializer):
+    color_notes = serializers.HyperlinkedIdentityField(
+        many=True, read_only=True, view_name='note-detail')
+    nose_notes = serializers.HyperlinkedIdentityField(
+        many=True, read_only=True, view_name='note-detail')
+    taste_notes = serializers.HyperlinkedIdentityField(
+        many=True, read_only=True, view_name='note-detail')
+    finish_notes = serializers.HyperlinkedIdentityField(
+        many=True, read_only=True, view_name='note-detail')
 
 
     class Meta:
         model = Trait
-        fields = ('id', 'name', 'color_notes', 
+        fields = ('url', 'name', 'color_notes', 
                   'nose_notes', 'taste_notes', 'finish_notes')
 
 
-class NoteSerializer(serializers.ModelSerializer):
+class NoteSerializer(serializers.HyperlinkedModelSerializer):
     taster = serializers.ReadOnlyField(source='taster.username')
 
 
     class Meta:
         model = Note
-        fields = ('id', 'taster', 'tasted', 'wine', 'color_traits', 
+        fields = ('url', 'taster', 'tasted', 'wine', 'color_traits', 
                   'nose_traits', 'taste_traits', 'finish_traits', 'rating')
 
 
-class UserSerializer(serializers.ModelSerializer):
-    notes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    notes = serializers.HyperlinkedIdentityField(
+        many=True, read_only=True, view_name='note-detail')
 
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'notes')
+        fields = ('url', 'username', 'email', 'notes')
