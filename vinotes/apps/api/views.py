@@ -72,7 +72,7 @@ class WineList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class WineDetail(generics.RetrieveUpdateDestroyAPIView):
+class WineDetail(generics.RetrieveAPIView):
     """
     Retrieve, update, or delete a wine.
     """
