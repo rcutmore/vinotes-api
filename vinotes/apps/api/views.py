@@ -56,7 +56,7 @@ class TraitList(generics.ListCreateAPIView):
 
 class TraitDetail(generics.RetrieveAPIView):
     """
-    Retrieve, update, or delete a wine trait.
+    Retrieve a wine trait.
     """
     queryset = Trait.objects.all()
     serializer_class = TraitSerializer
@@ -74,7 +74,7 @@ class WineList(generics.ListCreateAPIView):
 
 class WineDetail(generics.RetrieveAPIView):
     """
-    Retrieve, update, or delete a wine.
+    Retrieve a wine.
     """
     queryset = Wine.objects.all()
     serializer_class = WineSerializer
