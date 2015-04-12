@@ -90,9 +90,9 @@ class WineryList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class WineryDetail(generics.RetrieveUpdateDestroyAPIView):
+class WineryDetail(generics.RetrieveAPIView):
     """
-    Retrieve, update, or delete a winery.
+    Retrieve a winery.
     """
     queryset = Winery.objects.all()
     serializer_class = WinerySerializer
