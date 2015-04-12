@@ -54,7 +54,7 @@ class TraitList(generics.ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class TraitDetail(generics.RetrieveUpdateDestroyAPIView):
+class TraitDetail(generics.RetrieveAPIView):
     """
     Retrieve, update, or delete a wine trait.
     """
