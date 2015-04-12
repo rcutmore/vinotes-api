@@ -4,7 +4,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from .models import Note, Trait, Wine, Winery
-from .permissions import IsSameUserOrAdmin
 from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
 
 
@@ -104,15 +103,21 @@ class UserList(generics.ListAPIView):
     """
     List all users.
     """
-    queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAdminUser,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+    def get_queryset(self):
+        return User.objects.filter(email=self.request.user.email)
 
 
 class UserDetail(generics.RetrieveAPIView):
     """
     Retrieve a user.
     """
-    queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsSameUserOrAdmin,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+    def get_queryset(self):
+        return User.objects.filter(email=self.request.user.email)
