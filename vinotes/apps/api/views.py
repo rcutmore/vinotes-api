@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from .models import Note, Trait, Wine, Winery
+from .permissions import IsAuthenticatedOrRegistering
 from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
 
 
@@ -99,12 +100,12 @@ class WineryDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-class UserList(generics.ListAPIView):
+class UserList(generics.ListCreateAPIView):
     """
     List all users.
     """
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrRegistering,)
 
 
     def get_queryset(self):
