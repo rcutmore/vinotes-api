@@ -8,6 +8,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
+from configparser import RawConfigParser
+config = RawConfigParser()
+config.read('/etc/vinotes-api/settings.ini')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -17,12 +21,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'q)^5mpa132ond8lm67w*6^mm%dj!5f(%ufz$kqj0b!d)i0@3dc'
+SECRET_KEY = config.get('project', 'SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.getboolean('project', 'DEBUG')
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = config.getboolean('project', 'TEMPLATE_DEBUG')
 
 ALLOWED_HOSTS = []
 
