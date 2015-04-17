@@ -20,20 +20,9 @@ class WineSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class TraitSerializer(serializers.HyperlinkedModelSerializer):
-    color_notes = serializers.HyperlinkedIdentityField(
-        many=True, read_only=True, view_name='note-detail')
-    nose_notes = serializers.HyperlinkedIdentityField(
-        many=True, read_only=True, view_name='note-detail')
-    taste_notes = serializers.HyperlinkedIdentityField(
-        many=True, read_only=True, view_name='note-detail')
-    finish_notes = serializers.HyperlinkedIdentityField(
-        many=True, read_only=True, view_name='note-detail')
-
-
     class Meta:
         model = Trait
-        fields = ('url', 'name', 'color_notes', 
-                  'nose_notes', 'taste_notes', 'finish_notes')
+        fields = ('url', 'name')
 
 
 class NoteSerializer(serializers.HyperlinkedModelSerializer):
