@@ -1,8 +1,9 @@
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import Winery
+from .models import Wine, Winery
 
 
 def add_user(username, email):
@@ -15,11 +16,64 @@ def add_user(username, email):
     return user
 
 
+def add_wine(winery, name, vintage):
+    """
+    Create and return a new wine with the given name.
+    """
+    return Wine.objects.create(winery=winery, name=name, vintage=vintage)
+
+
 def add_winery(name):
     """
     Create and return a new winery with the given name.
     """
     return Winery.objects.create(name=name)
+
+
+class NoteTests(APITestCase):
+    def setUp(self):
+        add_user('test', 'test@test.com')
+        winery = add_winery('test')
+        add_wine(winery, 'test', 2015)
+
+
+    def test_create_note_with_authentication(self):
+        """
+        Ensure that we can create a new note after logging in.
+        """
+        self.client.login(username='test', password='test')
+
+        # Send POST request to create note.
+        url = reverse('note-list')
+        wine_url = reverse('wine-detail', kwargs={'pk': 1})
+        data = {'wine': wine_url, 'tasted': datetime.now(),'rating': 5}
+        response = self.client.post(url, data, format='json')
+
+        # Make sure note was created with expected data.
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response_tasted = datetime.strptime(
+            response.data['tasted'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        self.assertEqual(response_tasted.date(), data['tasted'].date())
+        self.assertEqual(response.data['rating'], data['rating'])
+        new_note_url = reverse('note-detail', kwargs={'pk': 1})
+        self.assertTrue(new_note_url in response.data['url'])
+
+
+    def test_create_note_without_authentication(self):
+        """
+        Ensure that we cannot create a new note without logging in.
+        """
+        # Send POST request to create note.
+        url = reverse('note-list')
+        wine_url = reverse('wine-detail', kwargs={'pk': 1})
+        data = {'wine': wine_url, 'rating': 5}
+        response = self.client.post(url, data, format='json')
+
+        # Make sure authentication error was returned.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('taster' not in response.data)
+        self.assertTrue('tasted' not in response.data)
+        self.assertTrue('rating' not in response.data)
 
 
 class TraitTests(APITestCase):
