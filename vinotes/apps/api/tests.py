@@ -86,16 +86,25 @@ class TraitTests(APITestCase):
         add_user()
 
 
+    def send_post_request(self):
+        """
+        Send POST request to create trait and return data and response.
+        """
+        url = reverse('trait-list')
+
+        data = {'name': 'test'}
+        response = self.client.post(url, data, format='json')
+
+        return (data, response)
+
+
     def test_create_trait_with_authentication(self):
         """
         Ensure that we can create a new trait after logging in.
         """
         self.client.login(username='test', password='test')
 
-        # Send POST request to create trait.
-        url = reverse('trait-list')
-        data = {'name': 'test'}
-        response = self.client.post(url, data, format='json')
+        data, response = self.send_post_request()
 
         # Make sure trait was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -108,10 +117,7 @@ class TraitTests(APITestCase):
         """
         Ensure that we cannot create a new trait without logging in.
         """
-        # Send POST request to create trait.
-        url = reverse('trait-list')
-        data = {'name': 'test'}
-        response = self.client.post(url, data, format='json')
+        data, response = self.send_post_request()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
