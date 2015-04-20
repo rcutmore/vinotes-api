@@ -214,3 +214,19 @@ class WineryTests(APITestCase):
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue('name' not in response.data)
+
+
+class UserTests(APITestCase):
+    def test_create_user(self):
+        """
+        Ensure that we can create a user.
+        """
+        # Send POST request to create user.
+        url = reverse('user-list')
+        data = {'username': 'test', 'email': 'test@test.com', 'password': 'test'}
+        response = self.client.post(url, data, format='json')
+
+        # Make sure user wasa created.
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['username'], data['username'])
+        self.assertEqual(response.data['email'], data['email'])
