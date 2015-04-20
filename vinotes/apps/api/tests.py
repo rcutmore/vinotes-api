@@ -6,24 +6,24 @@ from rest_framework.test import APITestCase
 from .models import Wine, Winery
 
 
-def add_user(username, email):
+def add_user(username='test', email='test@test.com', password='test'):
     """
     Create and return a new user with the given username and email.
     """
     user = User.objects.create_user(
-        username=username, email=email, password='test')
+        username=username, email=email, password=password)
     user.save()
     return user
 
 
-def add_wine(winery, name, vintage):
+def add_wine(winery, name='test', vintage=2015):
     """
-    Create and return a new wine with the given name.
+    Create and return a new wine with the given winery, name, and vintage.
     """
     return Wine.objects.create(winery=winery, name=name, vintage=vintage)
 
 
-def add_winery(name):
+def add_winery(name='test'):
     """
     Create and return a new winery with the given name.
     """
@@ -32,9 +32,9 @@ def add_winery(name):
 
 class NoteTests(APITestCase):
     def setUp(self):
-        add_user('test', 'test@test.com')
-        winery = add_winery('test')
-        add_wine(winery, 'test', 2015)
+        add_user()
+        winery = add_winery()
+        add_wine(winery)
 
 
     def test_create_note_with_authentication(self):
@@ -78,7 +78,7 @@ class NoteTests(APITestCase):
 
 class TraitTests(APITestCase):
     def setUp(self):
-        add_user('test', 'test@test.com')
+        add_user()
 
 
     def test_create_trait_with_authentication(self):
@@ -115,8 +115,8 @@ class TraitTests(APITestCase):
 
 class WineTests(APITestCase):
     def setUp(self):
-        add_user('test', 'test@test.com')
-        add_winery('test')
+        add_user()
+        add_winery()
 
 
     def test_create_wine_with_authentication(self):
@@ -159,7 +159,7 @@ class WineTests(APITestCase):
 
 class WineryTests(APITestCase):
     def setUp(self):
-        add_user('test', 'test@test.com')
+        add_user()
 
 
     def test_create_winery_with_authentication(self):
