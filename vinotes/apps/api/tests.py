@@ -178,16 +178,25 @@ class WineryTests(APITestCase):
         add_user()
 
 
+    def send_post_request(self):
+        """
+        Send POST request to create winery and return data and response.
+        """
+        url = reverse('winery-list')
+
+        data = {'name': 'test'}
+        response = self.client.post(url, data, format='json')
+
+        return (data, response)
+
+
     def test_create_winery_with_authentication(self):
         """
         Ensure that we can create a new winery after logging in.
         """
         self.client.login(username='test', password='test')
 
-        # Send POST request to create winery.
-        url = reverse('winery-list')
-        data = {'name': 'test'}
-        response = self.client.post(url, data, format='json')
+        data, response = self.send_post_request()
 
         # Make sure winery was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -200,10 +209,7 @@ class WineryTests(APITestCase):
         """
         Ensure that we cannot create a new winery without logging in.
         """
-        # Send POST request to create winery.
-        url = reverse('winery-list')
-        data = {'name': 'test'}
-        response = self.client.post(url, data, format='json')
+        data, response = self.send_post_request()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
