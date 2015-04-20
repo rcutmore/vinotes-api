@@ -37,17 +37,26 @@ class NoteTests(APITestCase):
         add_wine(winery)
 
 
+    def send_post_request(self):
+        """
+        Send POST request to create note and return data and response.
+        """
+        url = reverse('note-list')
+        wine_url = reverse('wine-detail', kwargs={'pk': 1})
+
+        data = {'wine': wine_url, 'tasted': datetime.now(),'rating': 5}
+        response = self.client.post(url, data, format='json')
+        
+        return (data, response)
+
+
     def test_create_note_with_authentication(self):
         """
         Ensure that we can create a new note after logging in.
         """
         self.client.login(username='test', password='test')
 
-        # Send POST request to create note.
-        url = reverse('note-list')
-        wine_url = reverse('wine-detail', kwargs={'pk': 1})
-        data = {'wine': wine_url, 'tasted': datetime.now(),'rating': 5}
-        response = self.client.post(url, data, format='json')
+        data, response = self.send_post_request()
 
         # Make sure note was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -63,11 +72,7 @@ class NoteTests(APITestCase):
         """
         Ensure that we cannot create a new note without logging in.
         """
-        # Send POST request to create note.
-        url = reverse('note-list')
-        wine_url = reverse('wine-detail', kwargs={'pk': 1})
-        data = {'wine': wine_url, 'rating': 5}
-        response = self.client.post(url, data, format='json')
+        data, response = self.send_post_request()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
