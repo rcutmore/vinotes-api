@@ -232,7 +232,7 @@ class UserTests(APITestCase):
         self.assertEqual(response.data['email'], data['email'])
 
 
-    def test_view_user_detail_for_authenticated_user(self):
+    def test_view_user_details_for_authenticated_user(self):
         """
         Ensure that we can view user details for authenticated user.
         """
@@ -249,6 +249,7 @@ class UserTests(APITestCase):
         self.assertEqual(response.data['email'], 'test@test.com')
         self.assertEqual(response.data['notes'], [])
         self.assertTrue(url in response.data['url'])
+
 
     def test_view_user_details_for_different_user(self):
         """
