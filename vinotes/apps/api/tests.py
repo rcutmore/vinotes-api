@@ -244,6 +244,7 @@ class UserTests(APITestCase):
         response = self.client.get(url)
 
         # Make sure correct user details are returned.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], 'test')
         self.assertEqual(response.data['email'], 'test@test.com')
         self.assertEqual(response.data['notes'], [])
