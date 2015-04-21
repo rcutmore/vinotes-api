@@ -248,3 +248,21 @@ class UserTests(APITestCase):
         self.assertEqual(response.data['email'], 'test@test.com')
         self.assertEqual(response.data['notes'], [])
         self.assertTrue(url in response.data['url'])
+
+    def test_view_user_details_for_different_user(self):
+        """
+        Ensure that we cannot view user details for a different user.
+        """
+        add_user()
+        add_user('test2', 'test2@test.com')
+        self.client.login(username='test', password='test')
+
+        # Send GET request for user details.
+        url = reverse('user-detail', kwargs={'pk': 2})
+        response = self.client.get(url)
+
+        # Make sure 'not found' error was returned.
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue('username' not in response.data)
+        self.assertTrue('email' not in response.data)
+        self.assertTrue('notes' not in response.data)
