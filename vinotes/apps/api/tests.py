@@ -226,7 +226,25 @@ class UserTests(APITestCase):
         data = {'username': 'test', 'email': 'test@test.com', 'password': 'test'}
         response = self.client.post(url, data, format='json')
 
-        # Make sure user wasa created.
+        # Make sure user was created.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['username'], data['username'])
         self.assertEqual(response.data['email'], data['email'])
+
+
+    def test_view_user_detail_for_authenticated_user(self):
+        """
+        Ensure that we can view user details for authenticated user.
+        """
+        add_user()
+        self.client.login(username='test', password='test')
+
+        # Send GET request for user details.
+        url = reverse('user-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure correct user details are returned.
+        self.assertEqual(response.data['username'], 'test')
+        self.assertEqual(response.data['email'], 'test@test.com')
+        self.assertEqual(response.data['notes'], [])
+        self.assertTrue(url in response.data['url'])
