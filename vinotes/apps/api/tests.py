@@ -268,3 +268,20 @@ class UserTests(APITestCase):
         self.assertTrue('username' not in response.data)
         self.assertTrue('email' not in response.data)
         self.assertTrue('notes' not in response.data)
+
+
+    def test_view_user_details_while_unauthenticated(self):
+        """
+        Ensure that we cannot view user details without authenticating.
+        """
+        add_user()
+
+        # Send GET request for user details.
+        url = reverse('user-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure authentication error was returned.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('username' not in response.data)
+        self.assertTrue('email' not in response.data)
+        self.assertTrue('notes' not in response.data)
