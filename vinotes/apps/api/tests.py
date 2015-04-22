@@ -232,7 +232,7 @@ class UserTests(APITestCase):
         self.assertEqual(response.data['email'], data['email'])
 
 
-    def test_view_user_details_for_authenticated_user(self):
+    def test_view_user_details_while_authenticated_for_same_user(self):
         """
         Ensure that we can view user details for authenticated user.
         """
@@ -251,7 +251,7 @@ class UserTests(APITestCase):
         self.assertTrue(url in response.data['url'])
 
 
-    def test_view_user_details_for_different_user(self):
+    def test_view_user_details_while_authenticated_for_different_user(self):
         """
         Ensure that we cannot view user details for a different user.
         """
