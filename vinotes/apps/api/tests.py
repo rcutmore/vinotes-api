@@ -233,6 +233,21 @@ class WineryTests(APITestCase):
         self.assertTrue(url in response.data['url'])
 
 
+    def test_view_winery_details_while_unauthenticated(self):
+        """
+        Ensure that we cannot view winery details without authenticating.
+        """
+        add_winery()
+
+        # Send GET request for winery details.
+        url = reverse('winery-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure authentication error was returned.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('name' not in response.data)
+
+
 class UserTests(APITestCase):
     def test_create_user(self):
         """
