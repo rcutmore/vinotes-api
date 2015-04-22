@@ -266,7 +266,7 @@ class UserTests(APITestCase):
 
     def test_view_user_details_while_authenticated_for_same_user(self):
         """
-        Ensure that we can view user details for authenticated user.
+        Ensure that we can view user details while authenticated for same user.
         """
         add_user()
         self.client.login(username='test', password='test')
@@ -285,7 +285,8 @@ class UserTests(APITestCase):
 
     def test_view_user_details_while_authenticated_for_different_user(self):
         """
-        Ensure that we cannot view user details for a different user.
+        Ensure that we cannot view user details while authenticated for 
+        different user.
         """
         add_user()
         add_user('test2', 'test2@test.com')
