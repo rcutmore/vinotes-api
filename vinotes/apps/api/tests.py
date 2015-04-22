@@ -216,6 +216,23 @@ class WineryTests(APITestCase):
         self.assertTrue('name' not in response.data)
 
 
+    def test_view_winery_details_while_authenticated(self):
+        """
+        Ensure that we can view winery details while authenticated.
+        """
+        add_winery()
+        self.client.login(username='test', password='test')
+
+        # Send GET request for winery details.
+        url = reverse('winery-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure correct winery details were returned.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], 'test')
+        self.assertTrue(url in response.data['url'])
+
+
 class UserTests(APITestCase):
     def test_create_user(self):
         """
