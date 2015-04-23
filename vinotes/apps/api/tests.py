@@ -126,8 +126,8 @@ class TraitTests(APITestCase):
 
 class WineTests(APITestCase):
     def setUp(self):
-        add_user()
-        add_winery()
+        self.user = add_user()
+        self.winery = add_winery()
 
 
     def send_post_request(self):
@@ -171,6 +171,27 @@ class WineTests(APITestCase):
         self.assertTrue('winery' not in response.data)
         self.assertTrue('name' not in response.data)
         self.assertTrue('vintage' not in response.data)
+
+
+    def test_view_wine_details_while_authenticated(self):
+        """
+        Ensure that we can view wine details after logging in.
+        """
+        add_wine(self.winery)
+        self.client.login(username='test', password='test')
+
+        # Send GET request for wine details.
+        url = reverse('wine-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure correct wine details were returned.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_wine_url = reverse('wine-detail', kwargs={'pk': 1})
+        self.assertTrue(new_wine_url in response.data['url'])
+        winery_url = reverse('winery-detail', kwargs={'pk': 1})
+        self.assertTrue(winery_url in response.data['winery'])
+        self.assertEqual(response.data['name'], 'test')
+        self.assertEqual(response.data['vintage'], 2015)
 
 
 class WineryTests(APITestCase):
