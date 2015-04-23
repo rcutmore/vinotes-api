@@ -50,7 +50,7 @@ class NoteTests(APITestCase):
         return (data, response)
 
 
-    def test_create_note_with_authentication(self):
+    def test_create_note_while_authenticated(self):
         """
         Ensure that we can create a new note after logging in.
         """
@@ -68,7 +68,7 @@ class NoteTests(APITestCase):
         self.assertTrue(new_note_url in response.data['url'])
 
 
-    def test_create_note_without_authentication(self):
+    def test_create_note_while_unauthenticated(self):
         """
         Ensure that we cannot create a new note without logging in.
         """
@@ -98,7 +98,7 @@ class TraitTests(APITestCase):
         return (data, response)
 
 
-    def test_create_trait_with_authentication(self):
+    def test_create_trait_while_authenticated(self):
         """
         Ensure that we can create a new trait after logging in.
         """
@@ -113,7 +113,7 @@ class TraitTests(APITestCase):
         self.assertTrue(new_trait_url in response.data['url'])
 
 
-    def test_create_trait_without_authentication(self):
+    def test_create_trait_while_unauthenticated(self):
         """
         Ensure that we cannot create a new trait without logging in.
         """
@@ -143,7 +143,7 @@ class WineTests(APITestCase):
         return (data, response)
 
 
-    def test_create_wine_with_authentication(self):
+    def test_create_wine_while_authenticated(self):
         """
         Ensure that we can create a new wine after logging in.
         """
@@ -160,7 +160,7 @@ class WineTests(APITestCase):
         self.assertTrue(new_wine_url in response.data['url'])
 
 
-    def test_create_wine_without_authentication(self):
+    def test_create_wine_while_unauthenticated(self):
         """
         Ensure that we cannot create a new wine without logging in.
         """
@@ -190,7 +190,7 @@ class WineryTests(APITestCase):
         return (data, response)
 
 
-    def test_create_winery_with_authentication(self):
+    def test_create_winery_while_authenticated(self):
         """
         Ensure that we can create a new winery after logging in.
         """
@@ -205,7 +205,7 @@ class WineryTests(APITestCase):
         self.assertTrue(new_winery_url in response.data['url'])
 
 
-    def test_create_winery_without_authentication(self):
+    def test_create_winery_while_unauthenticated(self):
         """
         Ensure that we cannot create a new winery without logging in.
         """
