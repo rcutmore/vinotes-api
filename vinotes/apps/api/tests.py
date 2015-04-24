@@ -3,7 +3,14 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import Wine, Winery
+from .models import Trait, Wine, Winery
+
+
+def add_trait(name='test'):
+    """
+    Create and return a new trait with the given name.
+    """
+    return Trait.objects.create(name=name)
 
 
 def add_user(username='test', email='test@test.com', password='test'):
@@ -122,6 +129,23 @@ class TraitTests(APITestCase):
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue('name' not in response.data)
+
+
+    def test_view_trait_details_while_authenticated(self):
+        """
+        Ensure that we can view trait details after logging in.
+        """
+        add_trait()
+        self.client.login(username='test', password='test')
+
+        # Send GET request for trait details.
+        url = reverse('trait-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure correct trait details were returned.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(url in response.data['url'])
+        self.assertEqual(response.data['name'], 'test')
 
 
 class WineTests(APITestCase):
