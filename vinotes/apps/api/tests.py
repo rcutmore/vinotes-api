@@ -148,6 +148,22 @@ class TraitTests(APITestCase):
         self.assertEqual(response.data['name'], 'test')
 
 
+    def test_view_trait_details_while_unauthenticated(self):
+        """
+        Ensure that we cannot view trait details without logging in.
+        """
+        add_trait()
+
+        # Send GET request for trait details.
+        url = reverse('trait-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure authentication error was returned.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
+        self.assertTrue('name' not in response.data)
+
+
 class WineTests(APITestCase):
     def setUp(self):
         self.user = add_user()
