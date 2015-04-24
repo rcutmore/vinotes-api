@@ -355,6 +355,7 @@ class UserTests(APITestCase):
 
         # Make sure correct user details are returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(url in response.data['url'])
         self.assertEqual(response.data['username'], 'test')
         self.assertEqual(response.data['email'], 'test@test.com')
         self.assertEqual(response.data['notes'], [])
@@ -376,6 +377,7 @@ class UserTests(APITestCase):
 
         # Make sure 'not found' error was returned.
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('username' not in response.data)
         self.assertTrue('email' not in response.data)
         self.assertTrue('notes' not in response.data)
@@ -393,6 +395,7 @@ class UserTests(APITestCase):
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('username' not in response.data)
         self.assertTrue('email' not in response.data)
         self.assertTrue('notes' not in response.data)
