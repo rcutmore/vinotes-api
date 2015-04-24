@@ -226,8 +226,7 @@ class WineTests(APITestCase):
 
         # Make sure correct wine details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        new_wine_url = reverse('wine-detail', kwargs={'pk': 1})
-        self.assertTrue(new_wine_url in response.data['url'])
+        self.assertTrue(url in response.data['url'])
         winery_url = reverse('winery-detail', kwargs={'pk': 1})
         self.assertTrue(winery_url in response.data['winery'])
         self.assertEqual(response.data['name'], 'test')
