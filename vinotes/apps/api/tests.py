@@ -307,6 +307,7 @@ class WineryTests(APITestCase):
 
         # Make sure correct winery details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['url'], url)
         self.assertEqual(response.data['name'], 'test')
         self.assertTrue(url in response.data['url'])
 
@@ -323,6 +324,7 @@ class WineryTests(APITestCase):
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('name' not in response.data)
 
 
