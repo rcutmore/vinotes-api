@@ -1,9 +1,18 @@
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
-from .models import Trait, Wine, Winery
+from .models import Note, Trait, Wine, Winery
+
+
+def add_note(taster, wine, tasted=timezone.now(), rating=5):
+    """
+    Create and return a new tasting note with the given information.
+    """
+    return Note.objects.create(
+        taster=taster, wine=wine, tasted=tasted, rating=rating)
 
 
 def add_trait(name='test'):
@@ -39,9 +48,9 @@ def add_winery(name='test'):
 
 class NoteTests(APITestCase):
     def setUp(self):
-        add_user()
-        winery = add_winery()
-        add_wine(winery)
+        self.user = add_user()
+        self.winery = add_winery()
+        self.wine = add_wine(self.winery)
 
 
     def send_post_request(self):
@@ -86,6 +95,27 @@ class NoteTests(APITestCase):
         self.assertTrue('taster' not in response.data)
         self.assertTrue('tasted' not in response.data)
         self.assertTrue('rating' not in response.data)
+
+
+    def test_view_note_details_while_authenticated(self):
+        """
+        Ensure that we can view note details after logging in.
+        """
+        note = add_note(taster=self.user, wine=self.wine)
+        self.client.login(username='test', password='test')
+
+        # Send GET request for note details.
+        url = reverse('note-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure correct note details were returned.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(url in response.data['url'])
+        self.assertEqual(response.data['taster'], note.taster.username)
+        response_tasted = datetime.strptime(
+            response.data['tasted'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        self.assertEqual(response_tasted.date(), note.tasted.date())
+        self.assertEqual(response.data['rating'], note.rating)
 
 
 class TraitTests(APITestCase):
