@@ -118,6 +118,24 @@ class NoteTests(APITestCase):
         self.assertEqual(response.data['rating'], note.rating)
 
 
+    def test_view_note_details_while_unauthenticated(self):
+        """
+        Ensure that we cannot view note details without logging in.
+        """
+        add_note(taster=self.user, wine=self.wine)
+
+        # Send GET requesst for note details.
+        url = reverse('note-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+
+        # Make sure authentication error was returned.
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
+        self.assertTrue('taster' not in response.data)
+        self.assertTrue('tasted' not in response.data)
+        self.assertTrue('rating' not in response.data)
+
+
 class TraitTests(APITestCase):
     def setUp(self):
         add_user()
