@@ -199,7 +199,7 @@ class TraitTests(APITestCase):
         """
         Ensure that we can view trait details after logging in.
         """
-        add_trait()
+        trait = add_trait()
         self.client.login(username='test', password='test')
 
         url, response = self.send_get_request_for_trait_details()
@@ -207,7 +207,7 @@ class TraitTests(APITestCase):
         # Make sure correct trait details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
-        self.assertEqual(response.data['name'], 'test')
+        self.assertEqual(response.data['name'], trait.name)
 
 
     def test_view_trait_details_while_unauthenticated(self):
@@ -287,7 +287,7 @@ class WineTests(APITestCase):
         """
         Ensure that we can view wine details after logging in.
         """
-        add_wine(self.winery)
+        wine = add_wine(self.winery)
         self.client.login(username='test', password='test')
 
         url, response = self.send_get_request_for_wine_details()
@@ -297,8 +297,8 @@ class WineTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
         self.assertTrue(winery_url in response.data['winery'])
-        self.assertEqual(response.data['name'], 'test')
-        self.assertEqual(response.data['vintage'], 2015)
+        self.assertEqual(response.data['name'], wine.name)
+        self.assertEqual(response.data['vintage'], wine.vintage)
 
 
     def test_view_wine_details_while_unauthenticated(self):
