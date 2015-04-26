@@ -323,9 +323,9 @@ class WineryTests(APITestCase):
         add_user()
 
 
-    def send_post_request(self):
+    def send_post_request_to_create_winery(self):
         """
-        Send POST request to create winery and return data and response.
+        Send POST request to create winery and return POST data and response.
         """
         url = reverse('winery-list')
 
@@ -341,42 +341,49 @@ class WineryTests(APITestCase):
         """
         self.client.login(username='test', password='test')
 
-        data, response = self.send_post_request()
+        data, response = self.send_post_request_to_create_winery()
+        new_winery_url = reverse('winery-detail', kwargs={'pk': 1})
 
         # Make sure winery was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['name'], data['name'])
-        new_winery_url = reverse('winery-detail', kwargs={'pk': 1})
         self.assertTrue(new_winery_url in response.data['url'])
-
+        self.assertEqual(response.data['name'], data['name'])
+        
 
     def test_create_winery_while_unauthenticated(self):
         """
         Ensure that we cannot create a new winery without logging in.
         """
-        data, response = self.send_post_request()
+        _, response = self.send_post_request_to_create_winery()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('name' not in response.data)
+
+
+    def send_get_request_for_winery_details(self):
+        """
+        Send GET request to get winery details and return GET url and response.
+        """
+        url = reverse('winery-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        return (url, response)
 
 
     def test_view_winery_details_while_authenticated(self):
         """
         Ensure that we can view winery details while authenticated.
         """
-        add_winery()
+        winery = add_winery()
         self.client.login(username='test', password='test')
-
-        # Send GET request for winery details.
-        url = reverse('winery-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        
+        url, response = self.send_get_request_for_winery_details()
 
         # Make sure correct winery details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data['url'], url)
-        self.assertEqual(response.data['name'], 'test')
         self.assertTrue(url in response.data['url'])
+        self.assertEqual(response.data['name'], winery.name)
 
 
     def test_view_winery_details_while_unauthenticated(self):
