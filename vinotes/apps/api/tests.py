@@ -53,9 +53,9 @@ class NoteTests(APITestCase):
         self.wine = add_wine(self.winery)
 
 
-    def send_post_request(self):
+    def send_post_request_to_create_note(self):
         """
-        Send POST request to create note and return data and response.
+        Send POST request to create note and return POST data and response.
         """
         url = reverse('note-list')
         wine_url = reverse('wine-detail', kwargs={'pk': 1})
@@ -72,15 +72,15 @@ class NoteTests(APITestCase):
         """
         self.client.login(username='test', password='test')
 
-        data, response = self.send_post_request()
+        data, response = self.send_post_request_to_create_note()
+        response_tasted = datetime.strptime(
+            response.data['tasted'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        new_note_url = reverse('note-detail', kwargs={'pk': 1})
 
         # Make sure note was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        response_tasted = datetime.strptime(
-            response.data['tasted'], '%Y-%m-%dT%H:%M:%S.%fZ')
         self.assertEqual(response_tasted.date(), data['tasted'].date())
         self.assertEqual(response.data['rating'], data['rating'])
-        new_note_url = reverse('note-detail', kwargs={'pk': 1})
         self.assertTrue(new_note_url in response.data['url'])
 
 
@@ -88,13 +88,23 @@ class NoteTests(APITestCase):
         """
         Ensure that we cannot create a new note without logging in.
         """
-        data, response = self.send_post_request()
+        _, response = self.send_post_request_to_create_note()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('taster' not in response.data)
         self.assertTrue('tasted' not in response.data)
         self.assertTrue('rating' not in response.data)
+
+
+    def send_get_request_for_note_details(self):
+        """
+        Send GET request to get note details and return GET url and response.
+        """
+        url = reverse('note-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        return (url, response)
 
 
     def test_view_note_details_while_authenticated(self):
@@ -104,16 +114,14 @@ class NoteTests(APITestCase):
         note = add_note(taster=self.user, wine=self.wine)
         self.client.login(username='test', password='test')
 
-        # Send GET request for note details.
-        url = reverse('note-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        url, response = self.send_get_request_for_note_details()
+        response_tasted = datetime.strptime(
+            response.data['tasted'], '%Y-%m-%dT%H:%M:%S.%fZ')
 
         # Make sure correct note details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
         self.assertEqual(response.data['taster'], note.taster.username)
-        response_tasted = datetime.strptime(
-            response.data['tasted'], '%Y-%m-%dT%H:%M:%S.%fZ')
         self.assertEqual(response_tasted.date(), note.tasted.date())
         self.assertEqual(response.data['rating'], note.rating)
 
@@ -124,9 +132,7 @@ class NoteTests(APITestCase):
         """
         add_note(taster=self.user, wine=self.wine)
 
-        # Send GET requesst for note details.
-        url = reverse('note-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        _, response = self.send_get_request_for_note_details()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
