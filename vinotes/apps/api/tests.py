@@ -147,9 +147,9 @@ class TraitTests(APITestCase):
         add_user()
 
 
-    def send_post_request(self):
+    def send_post_request_to_create_trait(self):
         """
-        Send POST request to create trait and return data and response.
+        Send POST request to create trait and return POST data and response.
         """
         url = reverse('trait-list')
 
@@ -165,24 +165,34 @@ class TraitTests(APITestCase):
         """
         self.client.login(username='test', password='test')
 
-        data, response = self.send_post_request()
+        data, response = self.send_post_request_to_create_trait()
+        new_trait_url = reverse('trait-detail', kwargs={'pk': 1})
 
         # Make sure trait was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['name'], data['name'])
-        new_trait_url = reverse('trait-detail', kwargs={'pk': 1})
         self.assertTrue(new_trait_url in response.data['url'])
+        self.assertEqual(response.data['name'], data['name'])
 
 
     def test_create_trait_while_unauthenticated(self):
         """
         Ensure that we cannot create a new trait without logging in.
         """
-        data, response = self.send_post_request()
+        _, response = self.send_post_request_to_create_trait()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('name' not in response.data)
+
+
+    def send_get_request_for_trait_details(self):
+        """
+        Send GET request to get trait details and return GET url and response.
+        """
+        url = reverse('trait-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        return (url, response)
 
 
     def test_view_trait_details_while_authenticated(self):
@@ -192,9 +202,7 @@ class TraitTests(APITestCase):
         add_trait()
         self.client.login(username='test', password='test')
 
-        # Send GET request for trait details.
-        url = reverse('trait-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        url, response = self.send_get_request_for_trait_details()
 
         # Make sure correct trait details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -208,9 +216,7 @@ class TraitTests(APITestCase):
         """
         add_trait()
 
-        # Send GET request for trait details.
-        url = reverse('trait-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        _, response = self.send_get_request_for_trait_details()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
