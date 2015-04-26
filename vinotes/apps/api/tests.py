@@ -230,9 +230,9 @@ class WineTests(APITestCase):
         self.winery = add_winery()
 
 
-    def send_post_request(self):
+    def send_post_request_to_create_wine(self):
         """
-        Send POST request to create wine and return data and response.
+        Send POST request to create wine and return POST data and response.
         """
         url = reverse('wine-list')
         winery_url = reverse('winery-detail', kwargs={'pk': 1})
@@ -249,28 +249,38 @@ class WineTests(APITestCase):
         """
         self.client.login(username='test', password='test')
 
-        data, response = self.send_post_request()
+        data, response = self.send_post_request_to_create_wine()
+        new_wine_url = reverse('wine-detail', kwargs={'pk': 1})
 
         # Make sure wine was created with expected data.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(new_wine_url in response.data['url'])
         self.assertTrue(data['winery'] in response.data['winery'])
         self.assertEqual(response.data['name'], data['name'])
         self.assertEqual(response.data['vintage'], data['vintage'])
-        new_wine_url = reverse('wine-detail', kwargs={'pk': 1})
-        self.assertTrue(new_wine_url in response.data['url'])
 
 
     def test_create_wine_while_unauthenticated(self):
         """
         Ensure that we cannot create a new wine without logging in.
         """
-        data, response = self.send_post_request()
+        _, response = self.send_post_request_to_create_wine()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue('url' not in response.data)
         self.assertTrue('winery' not in response.data)
         self.assertTrue('name' not in response.data)
         self.assertTrue('vintage' not in response.data)
+
+
+    def send_get_request_for_wine_details(self):
+        """
+        Send GET request to get wine details and return GET url and response.
+        """
+        url = reverse('wine-detail', kwargs={'pk': 1})
+        response = self.client.get(url)
+        return (url, response)
 
 
     def test_view_wine_details_while_authenticated(self):
@@ -280,14 +290,12 @@ class WineTests(APITestCase):
         add_wine(self.winery)
         self.client.login(username='test', password='test')
 
-        # Send GET request for wine details.
-        url = reverse('wine-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
-
+        url, response = self.send_get_request_for_wine_details()
+        winery_url = reverse('winery-detail', kwargs={'pk': 1})
+        
         # Make sure correct wine details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
-        winery_url = reverse('winery-detail', kwargs={'pk': 1})
         self.assertTrue(winery_url in response.data['winery'])
         self.assertEqual(response.data['name'], 'test')
         self.assertEqual(response.data['vintage'], 2015)
@@ -300,8 +308,7 @@ class WineTests(APITestCase):
         add_wine(self.winery)
 
         # Send GET request for wine details.
-        url = reverse('wine-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        _, response = self.send_get_request_for_wine_details()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
