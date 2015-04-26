@@ -60,7 +60,7 @@ class NoteTests(APITestCase):
         url = reverse('note-list')
         wine_url = reverse('wine-detail', kwargs={'pk': 1})
 
-        data = {'wine': wine_url, 'tasted': datetime.now(),'rating': 5}
+        data = {'wine': wine_url, 'tasted': timezone.now(),'rating': 5}
         response = self.client.post(url, data, format='json')
         
         return (data, response)
