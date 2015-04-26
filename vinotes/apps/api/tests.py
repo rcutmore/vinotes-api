@@ -411,31 +411,40 @@ class UserTests(APITestCase):
         url = reverse('user-list')
         data = {'username': 'test', 'email': 'test@test.com', 'password': 'test'}
         response = self.client.post(url, data, format='json')
+        new_user_url = reverse('user-detail', kwargs={'pk': 1})
 
         # Make sure user was created.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(new_user_url in response.data['url'])
         self.assertEqual(response.data['username'], data['username'])
         self.assertEqual(response.data['email'], data['email'])
+        self.assertEqual(response.data['notes'], [])
+
+
+    def send_get_request_for_user_details(self, pk=1):
+        """
+        Send GET request to get user details and return GET url and response.
+        """
+        url = reverse('user-detail', kwargs={'pk': pk})
+        response = self.client.get(url)
+        return (url, response)
 
 
     def test_view_user_details_while_authenticated_for_same_user(self):
         """
         Ensure that we can view user details while authenticated for same user.
         """
-        add_user()
+        user = add_user()
         self.client.login(username='test', password='test')
 
-        # Send GET request for user details.
-        url = reverse('user-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        url, response = self.send_get_request_for_user_details()
 
         # Make sure correct user details are returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
-        self.assertEqual(response.data['username'], 'test')
-        self.assertEqual(response.data['email'], 'test@test.com')
-        self.assertEqual(response.data['notes'], [])
-        self.assertTrue(url in response.data['url'])
+        self.assertEqual(response.data['username'], user.username)
+        self.assertEqual(response.data['email'], user.email)
+        self.assertEqual(response.data['notes'], list(user.notes.all()))
 
 
     def test_view_user_details_while_authenticated_for_different_user(self):
@@ -447,9 +456,7 @@ class UserTests(APITestCase):
         add_user('test2', 'test2@test.com')
         self.client.login(username='test', password='test')
 
-        # Send GET request for user details.
-        url = reverse('user-detail', kwargs={'pk': 2})
-        response = self.client.get(url)
+        _, response = self.send_get_request_for_user_details(2)
 
         # Make sure 'not found' error was returned.
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -465,9 +472,7 @@ class UserTests(APITestCase):
         """
         add_user()
 
-        # Send GET request for user details.
-        url = reverse('user-detail', kwargs={'pk': 1})
-        response = self.client.get(url)
+        _, response = self.send_get_request_for_user_details()
 
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
