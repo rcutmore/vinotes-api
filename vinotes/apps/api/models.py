@@ -44,13 +44,13 @@ class Note(models.Model):
     tasted = models.DateTimeField(null=True, blank=True)
     wine = models.ForeignKey(Wine)
     color_traits = models.ManyToManyField(
-        Trait, related_name='color_notes', null=True, blank=True)
+        Trait, related_name='color_notes', blank=True)
     nose_traits = models.ManyToManyField(
-        Trait, related_name='nose_notes', null=True, blank=True)
+        Trait, related_name='nose_notes', blank=True)
     taste_traits = models.ManyToManyField(
-        Trait, related_name='taste_notes', null=True, blank=True)
+        Trait, related_name='taste_notes', blank=True)
     finish_traits = models.ManyToManyField(
-        Trait, related_name='finish_notes', null=True, blank=True)
+        Trait, related_name='finish_notes', blank=True)
     rating = models.PositiveSmallIntegerField(
         choices=RATING_CHOICES, null=True, blank=True)
 
