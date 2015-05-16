@@ -34,13 +34,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    # Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Django Rest Framework
     'rest_framework',
+    'rest_framework.authtoken',
+
+    # Django Custom User
+    'custom_user',
+
+    # Interal apps
     'apps.api',
 )
 
@@ -92,6 +101,14 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# Django Rest Framework
+
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
+
+
+# Django Custom User
+
+AUTH_USER_MODEL = 'custom_user.EmailUser'

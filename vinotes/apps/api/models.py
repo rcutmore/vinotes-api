@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -40,7 +41,7 @@ class Note(models.Model):
     RATING_CHOICES = ((1, 1), (2, 2), (3, 3), (4, 4), (5, 5),)
 
 
-    taster = models.ForeignKey('auth.User', related_name='notes')
+    taster = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='notes')
     tasted = models.DateTimeField(null=True, blank=True)
     wine = models.ForeignKey(Wine)
     color_traits = models.ManyToManyField(

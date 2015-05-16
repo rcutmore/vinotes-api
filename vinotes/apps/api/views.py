@@ -1,11 +1,14 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+
 from .models import Note, Trait, Wine, Winery
 from .permissions import IsAuthenticatedOrRegistering
-from .serializers import NoteSerializer, TraitSerializer, WineSerializer, WinerySerializer, UserSerializer
+from .serializers import (NoteSerializer, TraitSerializer, WineSerializer, 
+                          WinerySerializer, UserSerializer)
 
 
 @api_view(('GET',))
@@ -109,7 +112,7 @@ class UserList(generics.ListCreateAPIView):
 
 
     def get_queryset(self):
-        return User.objects.filter(email=self.request.user.email)
+        return get_user_model().objects.filter(email=self.request.user.email)
 
 
 class UserDetail(generics.RetrieveAPIView):
@@ -121,4 +124,4 @@ class UserDetail(generics.RetrieveAPIView):
 
 
     def get_queryset(self):
-        return User.objects.filter(email=self.request.user.email)
+        return get_user_model().objects.filter(email=self.request.user.email)

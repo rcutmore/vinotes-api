@@ -1,5 +1,7 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
+
 from .models import Note, Trait, Wine, Winery
 
 
@@ -41,8 +43,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
     class Meta:
-        model = User
-        fields = ('url', 'username', 'email', 'password', 'notes')
+        model = get_user_model()
+        fields = ('url', 'email', 'password', 'notes')
         write_only_fields = ('password',)
 
 
@@ -50,8 +52,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         """
         Make sure user's password is hashed before storing.
         """
-        user = User(
-            email=validated_data['email'], username=validated_data['username'])
+        user = get_user_model()(email=validated_data['email'])
         user.set_password(validated_data['password'])
         user.save()
         return user
