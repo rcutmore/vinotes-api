@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
 from .models import Note, Trait, Wine, Winery
 
@@ -50,9 +51,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         """
-        Make sure user's password is hashed before storing.
+        Hash user's password and create token.
         """
         user = get_user_model()(email=validated_data['email'])
         user.set_password(validated_data['password'])
         user.save()
+        Token.objects.create(user=user)
         return user
