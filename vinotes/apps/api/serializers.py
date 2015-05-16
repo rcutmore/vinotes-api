@@ -29,7 +29,7 @@ class TraitSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class NoteSerializer(serializers.HyperlinkedModelSerializer):
-    taster = serializers.ReadOnlyField(source='taster.username')
+    taster = serializers.ReadOnlyField(source='taster.email')
 
 
     class Meta:
