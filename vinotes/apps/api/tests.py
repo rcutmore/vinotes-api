@@ -1,9 +1,12 @@
 from datetime import datetime
-from django.contrib.auth.models import User
+
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
 from django.utils import timezone
+
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from .models import Note, Trait, Wine, Winery
 
 
@@ -22,12 +25,11 @@ def add_trait(name='test'):
     return Trait.objects.create(name=name)
 
 
-def add_user(username='test', email='test@test.com', password='test'):
+def add_user(email='test@test.com', password='test'):
     """
-    Create and return a new user with the given username and email.
+    Create and return a new user with the given email and password.
     """
-    user = User.objects.create_user(
-        username=username, email=email, password=password)
+    user = get_user_model().objects.create_user(email=email, password=password)
     user.save()
     return user
 
@@ -52,7 +54,6 @@ class NoteTests(APITestCase):
         self.winery = add_winery()
         self.wine = add_wine(self.winery)
 
-
     def send_post_request_to_create_note(self):
         """
         Send POST request to create note and return POST data and response.
@@ -73,12 +74,11 @@ class NoteTests(APITestCase):
         
         return (data, response)
 
-
     def test_create_note_while_authenticated(self):
         """
         Ensure that we can create a new note after logging in.
         """
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         data, response = self.send_post_request_to_create_note()
         response_tasted = datetime.strptime(
@@ -90,7 +90,6 @@ class NoteTests(APITestCase):
         self.assertEqual(response_tasted.date(), data['tasted'].date())
         self.assertEqual(response.data['rating'], data['rating'])
         self.assertTrue(new_note_url in response.data['url'])
-
 
     def test_create_note_while_unauthenticated(self):
         """
@@ -105,7 +104,6 @@ class NoteTests(APITestCase):
         self.assertTrue('tasted' not in response.data)
         self.assertTrue('rating' not in response.data)
 
-
     def send_get_request_for_note_details(self):
         """
         Send GET request to get note details and return GET url and response.
@@ -114,13 +112,12 @@ class NoteTests(APITestCase):
         response = self.client.get(url)
         return (url, response)
 
-
     def test_view_note_details_while_authenticated(self):
         """
         Ensure that we can view note details after logging in.
         """
         note = add_note(taster=self.user, wine=self.wine)
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         url, response = self.send_get_request_for_note_details()
         response_tasted = datetime.strptime(
@@ -129,10 +126,9 @@ class NoteTests(APITestCase):
         # Make sure correct note details were returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
-        self.assertEqual(response.data['taster'], note.taster.username)
+        self.assertEqual(response.data['taster'], note.taster.email)
         self.assertEqual(response_tasted.date(), note.tasted.date())
         self.assertEqual(response.data['rating'], note.rating)
-
 
     def test_view_note_details_while_unauthenticated(self):
         """
@@ -154,7 +150,6 @@ class TraitTests(APITestCase):
     def setUp(self):
         add_user()
 
-
     def send_post_request_to_create_trait(self):
         """
         Send POST request to create trait and return POST data and response.
@@ -166,12 +161,11 @@ class TraitTests(APITestCase):
 
         return (data, response)
 
-
     def test_create_trait_while_authenticated(self):
         """
         Ensure that we can create a new trait after logging in.
         """
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         data, response = self.send_post_request_to_create_trait()
         new_trait_url = reverse('trait-detail', kwargs={'pk': 1})
@@ -180,7 +174,6 @@ class TraitTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(new_trait_url in response.data['url'])
         self.assertEqual(response.data['name'], data['name'])
-
 
     def test_create_trait_while_unauthenticated(self):
         """
@@ -193,7 +186,6 @@ class TraitTests(APITestCase):
         self.assertTrue('url' not in response.data)
         self.assertTrue('name' not in response.data)
 
-
     def send_get_request_for_trait_details(self):
         """
         Send GET request to get trait details and return GET url and response.
@@ -202,13 +194,12 @@ class TraitTests(APITestCase):
         response = self.client.get(url)
         return (url, response)
 
-
     def test_view_trait_details_while_authenticated(self):
         """
         Ensure that we can view trait details after logging in.
         """
         trait = add_trait()
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         url, response = self.send_get_request_for_trait_details()
 
@@ -216,7 +207,6 @@ class TraitTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
         self.assertEqual(response.data['name'], trait.name)
-
 
     def test_view_trait_details_while_unauthenticated(self):
         """
@@ -237,7 +227,6 @@ class WineTests(APITestCase):
         self.user = add_user()
         self.winery = add_winery()
 
-
     def send_post_request_to_create_wine(self):
         """
         Send POST request to create wine and return POST data and response.
@@ -250,12 +239,11 @@ class WineTests(APITestCase):
 
         return (data, response)
 
-
     def test_create_wine_while_authenticated(self):
         """
         Ensure that we can create a new wine after logging in.
         """
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         data, response = self.send_post_request_to_create_wine()
         new_wine_url = reverse('wine-detail', kwargs={'pk': 1})
@@ -266,7 +254,6 @@ class WineTests(APITestCase):
         self.assertTrue(data['winery'] in response.data['winery'])
         self.assertEqual(response.data['name'], data['name'])
         self.assertEqual(response.data['vintage'], data['vintage'])
-
 
     def test_create_wine_while_unauthenticated(self):
         """
@@ -281,7 +268,6 @@ class WineTests(APITestCase):
         self.assertTrue('name' not in response.data)
         self.assertTrue('vintage' not in response.data)
 
-
     def send_get_request_for_wine_details(self):
         """
         Send GET request to get wine details and return GET url and response.
@@ -290,13 +276,12 @@ class WineTests(APITestCase):
         response = self.client.get(url)
         return (url, response)
 
-
     def test_view_wine_details_while_authenticated(self):
         """
         Ensure that we can view wine details after logging in.
         """
         wine = add_wine(self.winery)
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         url, response = self.send_get_request_for_wine_details()
         winery_url = reverse('winery-detail', kwargs={'pk': 1})
@@ -307,7 +292,6 @@ class WineTests(APITestCase):
         self.assertTrue(winery_url in response.data['winery'])
         self.assertEqual(response.data['name'], wine.name)
         self.assertEqual(response.data['vintage'], wine.vintage)
-
 
     def test_view_wine_details_while_unauthenticated(self):
         """
@@ -330,7 +314,6 @@ class WineryTests(APITestCase):
     def setUp(self):
         add_user()
 
-
     def send_post_request_to_create_winery(self):
         """
         Send POST request to create winery and return POST data and response.
@@ -342,12 +325,11 @@ class WineryTests(APITestCase):
 
         return (data, response)
 
-
     def test_create_winery_while_authenticated(self):
         """
         Ensure that we can create a new winery after logging in.
         """
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         data, response = self.send_post_request_to_create_winery()
         new_winery_url = reverse('winery-detail', kwargs={'pk': 1})
@@ -356,7 +338,6 @@ class WineryTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(new_winery_url in response.data['url'])
         self.assertEqual(response.data['name'], data['name'])
-        
 
     def test_create_winery_while_unauthenticated(self):
         """
@@ -369,7 +350,6 @@ class WineryTests(APITestCase):
         self.assertTrue('url' not in response.data)
         self.assertTrue('name' not in response.data)
 
-
     def send_get_request_for_winery_details(self):
         """
         Send GET request to get winery details and return GET url and response.
@@ -378,13 +358,12 @@ class WineryTests(APITestCase):
         response = self.client.get(url)
         return (url, response)
 
-
     def test_view_winery_details_while_authenticated(self):
         """
         Ensure that we can view winery details while authenticated.
         """
         winery = add_winery()
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
         
         url, response = self.send_get_request_for_winery_details()
 
@@ -392,7 +371,6 @@ class WineryTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
         self.assertEqual(response.data['name'], winery.name)
-
 
     def test_view_winery_details_while_unauthenticated(self):
         """
@@ -416,44 +394,39 @@ class UserTests(APITestCase):
         Ensure that we can create a user.
         """
         # Send POST request to create user.
-        url = reverse('user-list')
-        data = {'username': 'test', 'email': 'test@test.com', 'password': 'test'}
+        url = reverse('emailuser-list')
+        data = {'email': 'test@test.com', 'password': 'test'}
         response = self.client.post(url, data, format='json')
-        new_user_url = reverse('user-detail', kwargs={'pk': 1})
+        new_user_url = reverse('emailuser-detail', kwargs={'pk': 1})
 
         # Make sure user was created.
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(new_user_url in response.data['url'])
-        self.assertEqual(response.data['username'], data['username'])
         self.assertEqual(response.data['email'], data['email'])
         self.assertEqual(response.data['notes'], [])
-
 
     def send_get_request_for_user_details(self, pk=1):
         """
         Send GET request to get user details and return GET url and response.
         """
-        url = reverse('user-detail', kwargs={'pk': pk})
+        url = reverse('emailuser-detail', kwargs={'pk': pk})
         response = self.client.get(url)
         return (url, response)
-
 
     def test_view_user_details_while_authenticated_for_same_user(self):
         """
         Ensure that we can view user details while authenticated for same user.
         """
         user = add_user()
-        self.client.login(username='test', password='test')
+        self.client.login(email='test@test.com', password='test')
 
         url, response = self.send_get_request_for_user_details()
 
         # Make sure correct user details are returned.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(url in response.data['url'])
-        self.assertEqual(response.data['username'], user.username)
         self.assertEqual(response.data['email'], user.email)
         self.assertEqual(response.data['notes'], list(user.notes.all()))
-
 
     def test_view_user_details_while_authenticated_for_different_user(self):
         """
@@ -461,18 +434,16 @@ class UserTests(APITestCase):
         different user.
         """
         add_user()
-        add_user('test2', 'test2@test.com')
-        self.client.login(username='test', password='test')
+        add_user('test2@test.com')
+        self.client.login(email='test@test.com', password='test')
 
         _, response = self.send_get_request_for_user_details(2)
 
         # Make sure 'not found' error was returned.
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertTrue('url' not in response.data)
-        self.assertTrue('username' not in response.data)
         self.assertTrue('email' not in response.data)
         self.assertTrue('notes' not in response.data)
-
 
     def test_view_user_details_while_unauthenticated(self):
         """
@@ -485,6 +456,5 @@ class UserTests(APITestCase):
         # Make sure authentication error was returned.
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue('url' not in response.data)
-        self.assertTrue('username' not in response.data)
         self.assertTrue('email' not in response.data)
         self.assertTrue('notes' not in response.data)

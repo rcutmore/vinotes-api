@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Note, Trait, Wine, Winery
 
+
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
     filter_horizontal = (
@@ -9,6 +10,7 @@ class NoteAdmin(admin.ModelAdmin):
         'taste_traits',
         'finish_traits',
     )
+
 
 admin.site.register(Trait)
 admin.site.register(Wine)

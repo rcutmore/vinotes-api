@@ -10,7 +10,6 @@ class WinerySerializer(serializers.HyperlinkedModelSerializer):
     wines = serializers.HyperlinkedIdentityField(
         many=True, read_only=True, view_name='wine-detail')
 
-
     class Meta:
         model = Winery
         fields = ('url', 'name', 'wines')
@@ -31,7 +30,6 @@ class TraitSerializer(serializers.HyperlinkedModelSerializer):
 class NoteSerializer(serializers.HyperlinkedModelSerializer):
     taster = serializers.ReadOnlyField(source='taster.email')
 
-
     class Meta:
         model = Note
         fields = ('url', 'taster', 'tasted', 'wine', 'color_traits', 
@@ -42,12 +40,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     notes = serializers.HyperlinkedIdentityField(
         many=True, read_only=True, view_name='note-detail')
 
-
     class Meta:
         model = get_user_model()
         fields = ('url', 'email', 'password', 'notes')
         write_only_fields = ('password',)
-
 
     def create(self, validated_data):
         """

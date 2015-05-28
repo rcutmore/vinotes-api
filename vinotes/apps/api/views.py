@@ -28,10 +28,8 @@ class NoteList(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-
     def get_queryset(self):
         return Note.objects.filter(taster=self.request.user)
-
 
     def perform_create(self, serializer):
         serializer.save(taster=self.request.user)
@@ -43,7 +41,6 @@ class NoteDetail(generics.RetrieveUpdateDestroyAPIView):
     """
     serializer_class = NoteSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
 
     def get_queryset(self):
         return Note.objects.filter(taster=self.request.user)
@@ -110,7 +107,6 @@ class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticatedOrRegistering,)
 
-
     def get_queryset(self):
         return get_user_model().objects.filter(email=self.request.user.email)
 
@@ -121,7 +117,6 @@ class UserDetail(generics.RetrieveAPIView):
     """
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
-
 
     def get_queryset(self):
         return get_user_model().objects.filter(email=self.request.user.email)
