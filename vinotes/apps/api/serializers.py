@@ -12,19 +12,19 @@ class WinerySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Winery
-        fields = ('url', 'name', 'wines')
+        fields = ('pk', 'url', 'name', 'wines')
 
 
 class WineSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Wine
-        fields = ('url', 'winery', 'name', 'vintage')
+        fields = ('pk', 'url', 'winery', 'name', 'vintage')
 
 
 class TraitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Trait
-        fields = ('url', 'name')
+        fields = ('pk', 'url', 'name')
 
 
 class NoteSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,7 +32,7 @@ class NoteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Note
-        fields = ('url', 'taster', 'tasted', 'wine', 'color_traits', 
+        fields = ('pk', 'url', 'taster', 'tasted', 'wine', 'color_traits', 
                   'nose_traits', 'taste_traits', 'finish_traits', 'rating')
 
 
