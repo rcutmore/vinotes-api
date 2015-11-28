@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 from configparser import RawConfigParser
 config = RawConfigParser()
-config.read('/etc/vinotes-api/settings.ini')
+config.read('/etc/vinotes-api/django-settings')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
