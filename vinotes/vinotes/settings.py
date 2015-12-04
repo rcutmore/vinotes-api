@@ -28,7 +28,7 @@ DEBUG = config.getboolean('project', 'DEBUG')
 
 TEMPLATE_DEBUG = config.getboolean('project', 'TEMPLATE_DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.vinot.es']
 
 
 # Application definition
